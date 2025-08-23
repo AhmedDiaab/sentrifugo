@@ -1,4 +1,13 @@
 <?php
+
+// PHP 8: magic quotes runtime functions were removed; add safe no-op stubs
+if (!function_exists('get_magic_quotes_runtime')) {
+    function get_magic_quotes_runtime() { return false; }
+}
+if (!function_exists('set_magic_quotes_runtime')) {
+    function set_magic_quotes_runtime($s) { return false; }
+}
+
 /**
  * PHPMailer - PHP email creation and transport class.
  * PHP Version 5

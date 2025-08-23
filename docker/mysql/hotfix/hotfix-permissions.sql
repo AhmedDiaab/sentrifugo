@@ -1,0 +1,3 @@
+GRANT ALL PRIVILEGES ON *.* TO 'sentrifugo'@'%' WITH GRANT OPTION;
+GRANT SUPER ON *.* TO 'sentrifugo'@'%';
+FLUSH PRIVILEGES;

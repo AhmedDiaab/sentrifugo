@@ -1,0 +1,61 @@
+services:
+  db:
+    container_name: db
+    image: mariadb:10.6
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: sentrifugo
+      MYSQL_USER: sentrifugo
+      MYSQL_PASSWORD: sentrifugo
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-psentrifugo"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    container_name: app
+    build:
+      context: .
+      args:
+        SENTRIFUGO_VERSION: "3.2"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      TZ: Africa/Cairo
+      # Configure DB during the web installer:
+      # Host: db, Name: sentrifugo, User: sentrifugo, Password: sentrifugo
+    volumes:
+      - sentrifugo_app:/var/www/html/sentrifugo
+    restart: unless-stopped
+  adminer:
+    image: adminer:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Preselect the DB host inside Adminer
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+  
+  smtp:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI
+
+
+volumes:
+  db_data:
+  sentrifugo_app:

@@ -18,6 +18,14 @@
  * FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// PHP 8: magic quotes runtime functions were removed; add safe no-op stubs
+if (!function_exists('get_magic_quotes_runtime')) {
+    function get_magic_quotes_runtime() { return false; }
+}
+if (!function_exists('set_magic_quotes_runtime')) {
+    function set_magic_quotes_runtime($s) { return false; }
+}
+
 if (version_compare(PHP_VERSION, '5.0.0', '<')) {
     exit("Sorry, PHPMailer will only run on PHP version 5 or greater!\n");
 }
