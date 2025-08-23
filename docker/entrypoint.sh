@@ -23,23 +23,23 @@ chown www-data:www-data /var/www/html/sentrifugo/logs/application.log
 chmod 664 /var/www/html/sentrifugo/logs/application.log
 
 # 3) PHP 8 patch for legacy PHPMailer autoloader  <<--- PUT YOUR BLOCK HERE
-f="$APP_DIR/install/PHPMailer/PHPMailerAutoload.php"
-if [ -f "$f" ] && grep -q "__autoload" "$f"; then
-  echo "Patching legacy __autoload in PHPMailerAutoload.php..."
-  sed -i 's/function __autoload/function legacy_autoload/' "$f"
-  printf "\n%s\n" "spl_autoload_register('legacy_autoload', true, true);" >> "$f"
-fi
+# f="$APP_DIR/install/PHPMailer/PHPMailerAutoload.php"
+# if [ -f "$f" ] && grep -q "__autoload" "$f"; then
+#   echo "Patching legacy __autoload in PHPMailerAutoload.php..."
+#   sed -i 's/function __autoload/function legacy_autoload/' "$f"
+#   printf "\n%s\n" "spl_autoload_register('legacy_autoload', true, true);" >> "$f"
+# fi
 
-STEP4="$APP_DIR/install/step4.php"
-if [ -f "$STEP4" ] && ! grep -q "PHPMailerAutoload.php" "$STEP4"; then
-  echo "Patching step4.php to require PHPMailerAutoload.php..."
-  # insert a require_once right after the opening <?php
-  awk '
-    BEGIN{ins=0}
-    ins==0 && /^<\?php/ { print; print "require_once __DIR__.\x27/PHPMailer/PHPMailerAutoload.php\x27;"; ins=1; next }
-    { print }
-  ' "$STEP4" > "${STEP4}.patched" && mv "${STEP4}.patched" "$STEP4"
-fi
+# STEP4="$APP_DIR/install/step4.php"
+# if [ -f "$STEP4" ] && ! grep -q "PHPMailerAutoload.php" "$STEP4"; then
+#   echo "Patching step4.php to require PHPMailerAutoload.php..."
+#   # insert a require_once right after the opening <?php
+#   awk '
+#     BEGIN{ins=0}
+#     ins==0 && /^<\?php/ { print; print "require_once __DIR__.\x27/PHPMailer/PHPMailerAutoload.php\x27;"; ins=1; next }
+#     { print }
+#   ' "$STEP4" > "${STEP4}.patched" && mv "${STEP4}.patched" "$STEP4"
+# fi
 
 # 4) Optional DB hotfix (only if mysql client exists and file is present)
 if command -v mysqladmin >/dev/null 2>&1 && command -v mysql >/dev/null 2>&1 && [ -f "$HOTFIX_SQL" ]; then

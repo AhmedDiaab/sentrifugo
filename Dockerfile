@@ -1,6 +1,6 @@
 # Sentrifugo 3.2 on Apache + PHP 8.1
 ARG SENTRIFUGO_VERSION=3.2
-FROM php:8.1-apache
+FROM php:7.4-apache
 
 # PHP extensions & deps (your script should install $PHPIZE_DEPS, libonig-dev, libicu-dev, etc.)
 COPY docker/scripts/install-exts.sh /usr/local/bin/install-exts.sh
@@ -24,7 +24,7 @@ RUN a2enconf sentrifugo-override servername
 COPY . /usr/src/sentrifugo
 
 # PHP 8 fix: overwrite legacy PHPMailer autoloader
-COPY docker/patches/PHPMailerAutoload.php /usr/src/sentrifugo/install/PHPMailer/PHPMailerAutoload.php
+# COPY docker/patches/PHPMailerAutoload.php /usr/src/sentrifugo/install/PHPMailer/PHPMailerAutoload.php
 
 # App dir (named volume at runtime)
 RUN mkdir -p /var/www/html/sentrifugo && chown -R www-data:www-data /var/www/html
