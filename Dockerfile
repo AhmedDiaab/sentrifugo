@@ -16,12 +16,12 @@ COPY docker/apache/servername.conf          /etc/apache2/conf-available/serverna
 RUN a2enconf sentrifugo-override servername
 
 # Download and stage Sentrifugo source
-#COPY docker/scripts/fetch-sentrifugo.sh /usr/local/bin/fetch-sentrifugo.sh
-#RUN chmod +x /usr/local/bin/fetch-sentrifugo.sh \
-# && /usr/local/bin/fetch-sentrifugo.sh "${SENTRIFUGO_VERSION}"
+COPY docker/scripts/fetch-sentrifugo.sh /usr/local/bin/fetch-sentrifugo.sh
+RUN chmod +x /usr/local/bin/fetch-sentrifugo.sh \
+&& /usr/local/bin/fetch-sentrifugo.sh "${SENTRIFUGO_VERSION}"
 
 # Import Sentrifugo
-COPY . /usr/src/sentrifugo
+# COPY . /usr/src/sentrifugo
 
 # PHP 8 fix: overwrite legacy PHPMailer autoloader
 # COPY docker/patches/PHPMailerAutoload.php /usr/src/sentrifugo/install/PHPMailer/PHPMailerAutoload.php
